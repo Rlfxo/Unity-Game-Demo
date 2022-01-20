@@ -610,9 +610,9 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1.5
-  m_Text: "\uD55C\uAE00\uB85C \uC368\uC9D0, abcd ABCD space\n\uB450\uC904\uB3C4 \uB9CE\uACE0\n\uC138\uC904
-    \uB118\uC5B4\uAC04\uBA74 \uC548 \uC77D\uC74C last line so long long image overlay
-    how a"
+  m_Text: "\uD55C\uAE00\uB85C \uC368\uC9D0, abcd ABCD space\n\uB450\uC904\uB3C4 \uB9CE\uACE0
+    Item\n\uC138\uC904 \uB118\uC5B4\uAC04\uBA74 \uC548 \uC77D\uC74C last line so
+    long long image overlay how a"
 --- !u!222 &833567055
 CanvasRenderer:
   m_ObjectHideFlags: 0
