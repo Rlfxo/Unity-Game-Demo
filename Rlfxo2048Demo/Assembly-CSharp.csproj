@@ -36,8 +36,10 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets/Scripts/MoveController.cs" />
-     <Compile Include="Assets/Scripts/GameManager.cs" />
+     <Compile Include="Assets/Scripts/Story/GameManager.cs" />
+     <Compile Include="Assets/Scripts/Story/MoveController.cs" />
+     <Compile Include="Assets/Scripts/Game/GameLogicManager.cs" />
+     <Compile Include="Assets/Scripts/Game/Moving.cs" />
     <Reference Include="UnityEngine">
         <HintPath>/Applications/Unity/Hub/Editor/2020.3.23f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
