@@ -93,7 +93,7 @@ public class GameLogicManager : MonoBehaviour{
             moveWait = true;
             //Grid[x1, y1].transform.position = Vector3.MoveTowards(Grid[x1, y1].transform.position, new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), 10000);
             Grid[x1, y1].GetComponent<Moving>().Move(x2, y2, false);
-            Grid[x2, y2] = Grid[x1, y2];
+            Grid[x2, y2] = Grid[x1, y1];
             Grid[x1, y1] = null;
         }
 
