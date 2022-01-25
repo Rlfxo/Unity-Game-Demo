@@ -1,16 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameLogicManager : MonoBehaviour{
 
     public GameObject[] n;
+    public GameObject Quit;
+    public Text Score, Plus;
 
     bool inputWait, moveWait;
+    bool stop = false;
 
     int x, y, i;// Block Move
     int j;// Monster Level
+    int k, l;// Game Over
+    int score;
     int gridSize = 5;
     Vector3 firstPos, gap;
     GameObject[,] Grid = new GameObject[5, 5];
@@ -22,6 +28,10 @@ public class GameLogicManager : MonoBehaviour{
     void Update(){
         // 뒤로가기 -> 종료
         if(Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
+
+        if(stop) return;
+
+        // 입력
         if(Input.GetMouseButtonDown(0) || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)){
             inputWait = true;
             firstPos = Input.GetMouseButtonDown(0) ? Input.mousePosition : (Vector3)Input.GetTouch(0).position;
@@ -76,12 +86,45 @@ public class GameLogicManager : MonoBehaviour{
                     moveWait = false;
                     Spawn();
 
+                    k = 0;
+                    j = 0;
+
+                    // score
+                    if(score > 0){
+                        Plus.text = "+" + score.ToString() + "    ";
+                        Plus.GetComponent<Animator>().SetTrigger("PlusBack");
+                        Plus.GetComponent<Animator>().SetTrigger("Plus");
+                        Score.text = (int.Parse(Score.text) + score).ToString();
+                        score = 0;
+                    }
+
                     for(x = 0; x < gridSize; x++){
                         for(y = 0; y < gridSize; y++){
-                            if(Grid[x, y] == null) continue;
+                            if(Grid[x, y] == null) {
+                                k++;// 빈 타일의 수
+                                continue;
+                            }
                             if(Grid[x, y].tag == "Combine") Grid[x, y].tag = "Untagged";
                         }
                     }
+                    if(k == 0){
+                        for(y = 0; y < 5; y++){//가로에 결합가능한 블럭 확인
+                            for(x = 0; x < 5-1; x++){
+                                if(Grid[x, y].name == Grid[x + 1, y].name) l++;
+                            }
+                        }
+                        for(x = 0; x < 5; x++){//세로에 결합가능한 블럭 확인
+                            for(y = 0; y < 5-1; y++){
+                                if(Grid[x, y].name == Grid[x, y + 1].name) l++;
+                            }
+                        }
+                        if(l == 0){// 종료
+                            stop = true;
+                            Quit.SetActive(true);
+                            return;
+                        }
+                    }
+                    
                 }
             }
         }
@@ -110,6 +153,8 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x2, y2] = Instantiate(n[j+1], new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), Quaternion.identity);
             Grid[x2, y2].tag = "Combine";
             Grid[x2, y2].GetComponent<Animator>().SetTrigger("Merge");
+
+            score += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
         }
     }
 
