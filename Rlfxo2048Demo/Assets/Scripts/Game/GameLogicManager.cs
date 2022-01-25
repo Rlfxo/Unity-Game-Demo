@@ -21,8 +21,11 @@ public class GameLogicManager : MonoBehaviour{
     int gridSize = 5;
     Vector3 firstPos, gap;
     GameObject[,] Grid = new GameObject[5, 5];
-    void Start(){
+    void Start(){// init
         Score.text = HP.ToString();
+
+        PlayerSpawn();
+
         Spawn();
         Spawn();
     }
@@ -38,6 +41,7 @@ public class GameLogicManager : MonoBehaviour{
             inputWait = true;
             firstPos = Input.GetMouseButtonDown(0) ? Input.mousePosition : (Vector3)Input.GetTouch(0).position;
         }
+        
         if(Input.GetMouseButton(0) || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)){
             gap = (Input.GetMouseButton(0)? Input.mousePosition : (Vector3)Input.GetTouch(0).position) - firstPos;
             if(gap.magnitude < 100) return;
@@ -91,13 +95,19 @@ public class GameLogicManager : MonoBehaviour{
                     k = 0;
                     j = 0;
 
-                    // score 연산
+                    // score 연산 -> Damege로 수정하기 Score는 Hp로
                     if(score > 0){
                         Plus.text = "-" + score.ToString() + "    ";
                         Plus.GetComponent<Animator>().SetTrigger("PlusBack");
                         Plus.GetComponent<Animator>().SetTrigger("Plus");
                         Score.text = (int.Parse(Score.text) - score).ToString();
                         score = 0;
+
+                        if(int.Parse(Score.text) < 0){
+                            stop = true;
+                            Quit.SetActive(true);
+                            return;
+                        }
                     }
 
                     for(x = 0; x < gridSize; x++){
@@ -105,10 +115,12 @@ public class GameLogicManager : MonoBehaviour{
                             if(Grid[x, y] == null) {
                                 k++;// 빈 타일의 수
                                 continue;
-                            }
-                            if(Grid[x, y].tag == "Combine") Grid[x, y].tag = "Untagged";
+                            }// Max merge block
+                            if(Grid[x, y].tag == "Combine" && Grid[x, y].name != n[4].name + "(Clone)") Grid[x, y].tag = "Untagged";
+                            if(Grid[x, y].tag == "PlayerDone") Grid[x, y].tag = "Player";
                         }
                     }
+
                     if(k == 0){
                         for(y = 0; y < 5; y++){//가로에 결합가능한 블럭 확인
                             for(x = 0; x < 5-1; x++){
@@ -141,10 +153,26 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x2, y2] = Grid[x1, y1];
             Grid[x1, y1] = null;
         }
-
-        if(Grid[x1, y1] != null && Grid[x2, y2] != null && Grid[x1, y1].name == Grid[x2, y2].name && Grid[x1, y1].tag != "Combine" && Grid[x2, y2].tag != "Combine"){// 현재 좌표의 블럭이 목표 좌표의 블럭과 병합
+        
+        if(Grid[x1, y1] != null && Grid[x1, y1].tag == "Player" && Grid[x2, y2] != null){// 내가 플레이어고 목표에 몬스터가 있으면 잡음
             moveWait = true;
             for(j = 0; j <5; j++){// Monster Level Check
+                if(Grid[x2, y2].name == n[j].name + "(Clone)"){
+                    break;
+                }
+            }
+            Grid[x1, y1].GetComponent<Moving>().Move(x2, y2, true);
+            Destroy(Grid[x2, y2]);
+            Grid[x1, y1] = null;
+            Grid[x2, y2] = Instantiate(n[5], new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), Quaternion.identity);
+            Grid[x2, y2].tag = "PlayerDone";
+
+            score += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
+        }
+        
+        if(Grid[x1, y1] != null && Grid[x2, y2] != null && Grid[x1, y1].name == Grid[x2, y2].name && Grid[x1, y1].tag != "Combine" && Grid[x2, y2].tag != "Combine"){// 현재 좌표의 블럭이 목표 좌표의 블럭과 병합
+            moveWait = true;
+            for(j = 0; j <6; j++){// Monster Level Check
                 if(Grid[x2, y2].name == n[j].name + "(Clone)"){
                     break;
                 }
@@ -155,12 +183,17 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x2, y2] = Instantiate(n[j+1], new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), Quaternion.identity);
             Grid[x2, y2].tag = "Combine";
             Grid[x2, y2].GetComponent<Animator>().SetTrigger("Merge");
-
-            score += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
         }
+
     }
 
-    void Spawn(){// Object 생성
+    void PlayerSpawn(){// Player Object 생성
+        x = 2;
+        y = 0;
+        Grid[x, y] = Instantiate(n[5], new Vector3(1.1f * x -2.2f, 1.1f * y -2.5f, 0), Quaternion.identity);
+        Grid[x, y].tag = "Player";
+    }
+    void Spawn(){// Monster Object 생성
         while(true){
             x = Random.Range(0,gridSize);
             y = Random.Range(0,gridSize);
