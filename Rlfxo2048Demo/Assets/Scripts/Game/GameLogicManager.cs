@@ -9,9 +9,10 @@ public class GameLogicManager : MonoBehaviour{
     public GameObject[] n;
     public GameObject Quit;
     public Text Score, Plus;
-
     bool inputWait, moveWait;
     bool stop = false;
+
+    int HP = 100;
 
     int x, y, i;// Block Move
     int j;// Monster Level
@@ -21,6 +22,7 @@ public class GameLogicManager : MonoBehaviour{
     Vector3 firstPos, gap;
     GameObject[,] Grid = new GameObject[5, 5];
     void Start(){
+        Score.text = HP.ToString();
         Spawn();
         Spawn();
     }
@@ -89,12 +91,12 @@ public class GameLogicManager : MonoBehaviour{
                     k = 0;
                     j = 0;
 
-                    // score
+                    // score 연산
                     if(score > 0){
-                        Plus.text = "+" + score.ToString() + "    ";
+                        Plus.text = "-" + score.ToString() + "    ";
                         Plus.GetComponent<Animator>().SetTrigger("PlusBack");
                         Plus.GetComponent<Animator>().SetTrigger("Plus");
-                        Score.text = (int.Parse(Score.text) + score).ToString();
+                        Score.text = (int.Parse(Score.text) - score).ToString();
                         score = 0;
                     }
 
