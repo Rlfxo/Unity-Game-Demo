@@ -13,8 +13,8 @@ public class Moving : MonoBehaviour
         _x2 = x2;
         _y2 = y2;
         _merge = merge;
-        transform.position = Vector3.MoveTowards(transform.position, new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), 0.25f);
-        if (transform.position == new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0)){
+        transform.position = Vector3.MoveTowards(transform.position, new Vector3(1.94f * x2 -3.87f, 1.94f * y2 -3.0f, 0), 0.25f);
+        if (transform.position == new Vector3(1.94f * x2 -3.87f, 1.94f * y2 -3.0f, 0)){
             move = false;
             if(merge){
                 _merge = false;

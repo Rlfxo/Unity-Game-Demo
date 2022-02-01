@@ -164,7 +164,7 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x1, y1].GetComponent<Moving>().Move(x2, y2, true);
             Destroy(Grid[x2, y2]);
             Grid[x1, y1] = null;
-            Grid[x2, y2] = Instantiate(n[5], new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), Quaternion.identity);
+            Grid[x2, y2] = Instantiate(n[5], new Vector3(1.94f * x2 -3.87f, 1.94f * y2 -3.0f, 0), Quaternion.identity);
             Grid[x2, y2].tag = "PlayerDone";
 
             score += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
@@ -180,7 +180,7 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x1, y1].GetComponent<Moving>().Move(x2, y2, true);
             Destroy(Grid[x2, y2]);
             Grid[x1, y1] = null;
-            Grid[x2, y2] = Instantiate(n[j+1], new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), Quaternion.identity);
+            Grid[x2, y2] = Instantiate(n[j+1], new Vector3(1.94f * x2 -3.87f, 1.94f * y2 -3.0f, 0), Quaternion.identity);
             Grid[x2, y2].tag = "Combine";
             Grid[x2, y2].GetComponent<Animator>().SetTrigger("Merge");
         }
@@ -190,7 +190,7 @@ public class GameLogicManager : MonoBehaviour{
     void PlayerSpawn(){// Player Object 생성
         x = 2;
         y = 0;
-        Grid[x, y] = Instantiate(n[5], new Vector3(1.1f * x -2.2f, 1.1f * y -2.5f, 0), Quaternion.identity);
+        Grid[x, y] = Instantiate(n[5], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
         Grid[x, y].tag = "Player";
     }
     void Spawn(){// Monster Object 생성
@@ -199,7 +199,7 @@ public class GameLogicManager : MonoBehaviour{
             y = Random.Range(0,gridSize);
             if(Grid[x, y] == null) break;
         }
-        Grid[x, y] = Instantiate(Random.Range(0,5) > 0? n[0]:n[1], new Vector3(1.1f * x -2.2f, 1.1f * y -2.5f, 0), Quaternion.identity);
+        Grid[x, y] = Instantiate(Random.Range(0,5) > 0? n[0]:n[1], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
         Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
     }
 
