@@ -8,22 +8,22 @@ public class GameLogicManager : MonoBehaviour{
 
     public GameObject[] n;
     public GameObject Quit;
-    public Text Score, Plus;
+    public Text HP, Damage;
     bool inputWait, moveWait;
     bool stop = false;
 
-    int HP = 100;
+    int LessHP = 100;
     string PlayerDir = "";
 
     int x, y, i;// Block Move
     int j;// Monster Level
     int k, l;// Game Over
-    int score;
+    int damage;
     int gridSize = 5;
     Vector3 firstPos, gap;
     GameObject[,] Grid = new GameObject[5, 5];
     void Start(){// init
-        Score.text = HP.ToString();
+        HP.text = LessHP.ToString();
 
         PlayerSpawn();
 
@@ -100,16 +100,16 @@ public class GameLogicManager : MonoBehaviour{
                     k = 0;
                     j = 0;
 
-                    // score 연산 -> Damege로 수정하기 Score는 Hp로
-                    if(score > 0){
-                        Plus.text = "-" + score.ToString() + "    ";
-                        Plus.GetComponent<Animator>().SetTrigger("PlusBack");
-                        Plus.GetComponent<Animator>().SetTrigger("Plus");
-                        Score.text = (int.Parse(Score.text) - score).ToString();
-                        score = 0;
+                    // damage 연산
+                    if(damage > 0){
+                        Damage.text = "-" + damage.ToString() + "    ";
+                        Damage.GetComponent<Animator>().SetTrigger("PlusBack");
+                        Damage.GetComponent<Animator>().SetTrigger("Plus");
+                        HP.text = (int.Parse(HP.text) - damage).ToString();
+                        damage = 0;
 
-                        if(int.Parse(Score.text) < 0){
-                            Score.text = "0";
+                        if(int.Parse(HP.text) < 0){
+                            HP.text = "0";
                             stop = true;
                             Quit.SetActive(true);
                             return;
@@ -177,7 +177,7 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x2, y2].GetComponent<Animator>().SetTrigger(PlayerDir);
             Grid[x2, y2].tag = "PlayerDone";
 
-            score += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
+            damage += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
         }
         
         if(Grid[x1, y1] != null && Grid[x2, y2] != null && Grid[x1, y1].name == Grid[x2, y2].name && Grid[x1, y1].tag != "Combine" && Grid[x2, y2].tag != "Combine"){// 현재 좌표의 블럭이 목표 좌표의 블럭과 병합
