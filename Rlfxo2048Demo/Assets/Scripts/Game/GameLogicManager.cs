@@ -13,6 +13,7 @@ public class GameLogicManager : MonoBehaviour{
     bool stop = false;
 
     int HP = 100;
+    string PlayerDir = "";
 
     int x, y, i;// Block Move
     int j;// Monster Level
@@ -51,6 +52,7 @@ public class GameLogicManager : MonoBehaviour{
                 inputWait = false;
 
                 if(gap.y > 0 && gap.x > -0.5f && gap.x < 0.5f){// Up
+                    PlayerDir = "Up";
                     for(x = 0; x < gridSize; x++){
                         for(y = 0; y < gridSize-1; y++){
                             for(i = gridSize-1; i > y; i--){
@@ -60,6 +62,7 @@ public class GameLogicManager : MonoBehaviour{
                     }
                 }
                 else if(gap.y < 0 && gap.x > -0.5f && gap.x < 0.5f){// Down
+                    PlayerDir = "Down";
                     for(x = 0; x < gridSize; x++){
                         for(y = gridSize-1; y > 0; y--){
                             for(i = 0; i < y; i++){
@@ -69,6 +72,7 @@ public class GameLogicManager : MonoBehaviour{
                     }
                 }
                 else if(gap.x > 0 && gap.y > -0.5f && gap.y < 0.5f){// Right
+                    PlayerDir = "Right";
                     for(y = 0; y < gridSize; y++){
                         for(x = 0; x < gridSize-1; x++){
                             for(i = gridSize-1; i > x; i--){
@@ -78,6 +82,7 @@ public class GameLogicManager : MonoBehaviour{
                     }
                 }
                 else if(gap.x < 0 && gap.y > -0.5f && gap.y < 0.5f){// Left
+                    PlayerDir = "Left";
                     for(y = 0; y < gridSize; y++){
                         for(x = gridSize-1; x > 0; x--){
                             for(i = 0; i < x; i++){
@@ -104,6 +109,7 @@ public class GameLogicManager : MonoBehaviour{
                         score = 0;
 
                         if(int.Parse(Score.text) < 0){
+                            Score.text = "0";
                             stop = true;
                             Quit.SetActive(true);
                             return;
@@ -150,6 +156,9 @@ public class GameLogicManager : MonoBehaviour{
             moveWait = true;
             //Grid[x1, y1].transform.position = Vector3.MoveTowards(Grid[x1, y1].transform.position, new Vector3(1.1f * x2 -2.2f, 1.1f * y2 -2.5f, 0), 10000);
             Grid[x1, y1].GetComponent<Moving>().Move(x2, y2, false);
+            if(Grid[x1, y1].tag == "Player"){
+                Grid[x1, y1].GetComponent<Animator>().SetTrigger(PlayerDir);
+            }
             Grid[x2, y2] = Grid[x1, y1];
             Grid[x1, y1] = null;
         }
@@ -165,6 +174,7 @@ public class GameLogicManager : MonoBehaviour{
             Destroy(Grid[x2, y2]);
             Grid[x1, y1] = null;
             Grid[x2, y2] = Instantiate(n[5], new Vector3(1.94f * x2 -3.87f, 1.94f * y2 -3.0f, 0), Quaternion.identity);
+            Grid[x2, y2].GetComponent<Animator>().SetTrigger(PlayerDir);
             Grid[x2, y2].tag = "PlayerDone";
 
             score += (int)Mathf.Pow(2, j + 2); // 제곱 값 구하기
@@ -182,7 +192,7 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x1, y1] = null;
             Grid[x2, y2] = Instantiate(n[j+1], new Vector3(1.94f * x2 -3.87f, 1.94f * y2 -3.0f, 0), Quaternion.identity);
             Grid[x2, y2].tag = "Combine";
-            Grid[x2, y2].GetComponent<Animator>().SetTrigger("Merge");
+            //Grid[x2, y2].GetComponent<Animator>().SetTrigger("Merge");
         }
 
     }
@@ -200,7 +210,7 @@ public class GameLogicManager : MonoBehaviour{
             if(Grid[x, y] == null) break;
         }
         Grid[x, y] = Instantiate(Random.Range(0,5) > 0? n[0]:n[1], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
-        Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
+        //Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
     }
 
     public void Restart(){// 재시작 (ReStart, TryAgain)
