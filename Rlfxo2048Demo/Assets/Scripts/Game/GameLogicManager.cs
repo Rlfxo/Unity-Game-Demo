@@ -16,14 +16,17 @@ public class GameLogicManager : MonoBehaviour{
     bool stop = false;
 
     string PlayerDir = "";
+    string InputDir = "";
+    int damage;
 
     int x, y, i;// Block Move
     int j;// Monster Level
     int k, l;// Game Over
-    int damage;
+
     int gridSize = 5;
     Vector3 firstPos, gap;
     GameObject[,] Grid = new GameObject[5, 5];
+
     void Start(){// init
         HP.text = LessHP.ToString();
         Nokori.text = StageGoal.ToString() + "/" + StageGoal.ToString();
@@ -35,62 +38,42 @@ public class GameLogicManager : MonoBehaviour{
     void Update(){
         // 뒤로가기 -> 종료
         if(Input.GetKeyDown(KeyCode.Escape)) Application.Quit();
-
         if(stop) return;
 
         // 입력
         if(Input.GetMouseButtonDown(0) || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)){
             inputWait = true;
             firstPos = Input.GetMouseButtonDown(0) ? Input.mousePosition : (Vector3)Input.GetTouch(0).position;
+        }else if (Input.anyKeyDown){
+            inputWait = true;
+            InputDir = "Pass";
         }
         
-        if(Input.GetMouseButton(0) || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)){
-            gap = (Input.GetMouseButton(0)? Input.mousePosition : (Vector3)Input.GetTouch(0).position) - firstPos;
-            if(gap.magnitude < 100) return;
-            gap.Normalize();
+        if(InputDir == "Pass" || Input.GetMouseButton(0) || (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)){
+            if(InputDir != "Pass"){
+                gap = (Input.GetMouseButton(0)? Input.mousePosition : (Vector3)Input.GetTouch(0).position) - firstPos;
+                if(gap.magnitude < 100) return;
+                gap.Normalize();
+            }else {
+                gap = firstPos - firstPos;
+                if(Input.GetKeyDown(KeyCode.UpArrow)){ InputDir = "Up"; }
+                else if(Input.GetKeyDown(KeyCode.DownArrow)){ InputDir = "Down"; }
+                else if(Input.GetKeyDown(KeyCode.RightArrow)){ InputDir = "Right"; }
+                else if(Input.GetKeyDown(KeyCode.LeftArrow)){ InputDir = "Left"; }
+            }
 
             if(inputWait) {
                 inputWait = false;
 
-                if(gap.y > 0 && gap.x > -0.5f && gap.x < 0.5f){ UpMove(); }
-                else if(gap.y < 0 && gap.x > -0.5f && gap.x < 0.5f){
-                    PlayerDir = "Down";
-                    for(x = 0; x < gridSize; x++){
-                        for(y = gridSize-1; y > 0; y--){
-                            for(i = 0; i < y; i++){
-                                MoveOrMerge(x, i + 1, x, i);
-                            }
-                        }
-                    }
-                }
-                else if(gap.x > 0 && gap.y > -0.5f && gap.y < 0.5f){
-                    PlayerDir = "Right";
-                    for(y = 0; y < gridSize; y++){
-                        for(x = 0; x < gridSize-1; x++){
-                            for(i = gridSize-1; i > x; i--){
-                                MoveOrMerge(i - 1, y, i, y);
-                            }
-                        }
-                    }
-                }
-                else if(gap.x < 0 && gap.y > -0.5f && gap.y < 0.5f){
-                    PlayerDir = "Left";
-                    for(y = 0; y < gridSize; y++){
-                        for(x = gridSize-1; x > 0; x--){
-                            for(i = 0; i < x; i++){
-                                MoveOrMerge(i + 1, y, i, y);
-                            }
-                        }
-                    }
-                }
+                if(InputDir == "Up" || gap.y > 0 && gap.x > -0.5f && gap.x < 0.5f){ UpMove(); }
+                else if(InputDir == "Down" || gap.y < 0 && gap.x > -0.5f && gap.x < 0.5f){ DownMove(); }
+                else if(InputDir == "Right" || gap.x > 0 && gap.y > -0.5f && gap.y < 0.5f){ RightMove(); }
+                else if(InputDir == "Left" || gap.x < 0 && gap.y > -0.5f && gap.y < 0.5f){ LeftMove(); }
                 else return;
 
                 if(moveWait) {// Move -> Spawn
                     moveWait = false;
                     Spawn();
-
-                    k = 0;
-                    j = 0;
 
                     // damage 연산
                     if(damage > 0){
@@ -99,45 +82,22 @@ public class GameLogicManager : MonoBehaviour{
                         Damage.GetComponent<Animator>().SetTrigger("Plus");
                         HP.text = (int.Parse(HP.text) - damage).ToString();
                         damage = 0;
-
-                        if(int.Parse(HP.text) < 0){
+                        if(int.Parse(HP.text) < 0){// Hp0 -> GameOver -> tryAgain
                             HP.text = "0";
                             stop = true;
                             Quit.SetActive(true);
                             return;
                         }
                     }
-
-                    for(x = 0; x < gridSize; x++){
+                    for(x = 0; x < gridSize; x++){// Grid tag Reset
                         for(y = 0; y < gridSize; y++){
-                            if(Grid[x, y] == null) {
-                                k++;// 빈 타일의 수
-                                continue;
-                            }// Max merge block
+                            if(Grid[x, y] == null) continue;
                             if(Grid[x, y].tag == "Combine" && Grid[x, y].name != n[4].name + "(Clone)") Grid[x, y].tag = "Untagged";
                             if(Grid[x, y].tag == "PlayerDone") Grid[x, y].tag = "Player";
                         }
                     }
-
-                    if(k == 0){
-                        for(y = 0; y < 5; y++){// 가로에 결합가능한 블럭 확인
-                            for(x = 0; x < 5-1; x++){
-                                if(Grid[x, y].name == Grid[x + 1, y].name) l++;
-                            }
-                        }
-                        for(x = 0; x < 5; x++){// 세로에 결합가능한 블럭 확인
-                            for(y = 0; y < 5-1; y++){
-                                if(Grid[x, y].name == Grid[x, y + 1].name) l++;
-                            }
-                        }
-                        if(l == 0){// 종료
-                            stop = true;
-                            Quit.SetActive(true);
-                            return;
-                        }
-                    }
-                    
                 }
+                InputDir = "";
             }
         }
     }
@@ -186,7 +146,6 @@ public class GameLogicManager : MonoBehaviour{
             Grid[x2, y2].tag = "Combine";
             //Grid[x2, y2].GetComponent<Animator>().SetTrigger("Merge");
         }
-
     }
 
     void UpMove(){
@@ -200,13 +159,34 @@ public class GameLogicManager : MonoBehaviour{
         }
     }
     void DownMove(){
-        
+        PlayerDir = "Down";
+        for(x = 0; x < gridSize; x++){
+            for(y = gridSize-1; y > 0; y--){
+                for(i = 0; i < y; i++){
+                    MoveOrMerge(x, i + 1, x, i);
+                }
+            }
+        }
     }
     void RightMove(){
-        
+        PlayerDir = "Right";
+        for(y = 0; y < gridSize; y++){
+            for(x = 0; x < gridSize-1; x++){
+                for(i = gridSize-1; i > x; i--){
+                    MoveOrMerge(i - 1, y, i, y);
+                }
+            }
+        }
     }
     void LeftMove(){
-        
+        PlayerDir = "Left";
+        for(y = 0; y < gridSize; y++){
+            for(x = gridSize-1; x > 0; x--){
+                for(i = 0; i < x; i++){
+                    MoveOrMerge(i + 1, y, i, y);
+                }
+            }
+        }
     }
 
     void PlayerSpawn(){// Player Object 생성
@@ -215,7 +195,6 @@ public class GameLogicManager : MonoBehaviour{
         Grid[x, y] = Instantiate(n[5], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
         Grid[x, y].tag = "Player";
     }
-
     void Spawn(){// Monster Object 생성
         if (nokori == 0) return;
         while(true){
@@ -229,6 +208,33 @@ public class GameLogicManager : MonoBehaviour{
         //Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
     }
 
+    void Quit2048(){
+        for(x = 0; x < gridSize; x++){
+            for(y = 0; y < gridSize; y++){
+                if(Grid[x, y] == null) {
+                    k++;// 빈 타일의 수
+                    continue;
+                }// Max merge block
+            }
+        }
+        if(k == 0){
+            for(y = 0; y < 5; y++){// 가로에 결합가능한 블럭 확인
+                for(x = 0; x < 5-1; x++){
+                    if(Grid[x, y].name == Grid[x + 1, y].name) l++;
+                }
+            }
+            for(x = 0; x < 5; x++){// 세로에 결합가능한 블럭 확인
+                for(y = 0; y < 5-1; y++){
+                    if(Grid[x, y].name == Grid[x, y + 1].name) l++;
+                }
+            }
+            if(l == 0){// 종료
+                stop = true;
+                Quit.SetActive(true);
+                return;
+            }
+        }
+    }
     public void Restart(){// 재시작
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
