@@ -5,14 +5,16 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class GameLogicManager : MonoBehaviour{
+    int LessHP = 100;
+    int StageGoal = 10;
+    int nokori = 10;
 
     public GameObject[] n;
     public GameObject Quit;
-    public Text HP, Damage;
+    public Text HP, Damage, Nokori;
     bool inputWait, moveWait;
     bool stop = false;
 
-    int LessHP = 100;
     string PlayerDir = "";
 
     int x, y, i;// Block Move
@@ -24,9 +26,8 @@ public class GameLogicManager : MonoBehaviour{
     GameObject[,] Grid = new GameObject[5, 5];
     void Start(){// init
         HP.text = LessHP.ToString();
-
+        Nokori.text = StageGoal.ToString() + "/" + StageGoal.ToString();
         PlayerSpawn();
-
         Spawn();
         Spawn();
     }
@@ -51,17 +52,8 @@ public class GameLogicManager : MonoBehaviour{
             if(inputWait) {
                 inputWait = false;
 
-                if(gap.y > 0 && gap.x > -0.5f && gap.x < 0.5f){// Up
-                    PlayerDir = "Up";
-                    for(x = 0; x < gridSize; x++){
-                        for(y = 0; y < gridSize-1; y++){
-                            for(i = gridSize-1; i > y; i--){
-                                MoveOrMerge(x, i - 1, x, i);
-                            }
-                        }
-                    }
-                }
-                else if(gap.y < 0 && gap.x > -0.5f && gap.x < 0.5f){// Down
+                if(gap.y > 0 && gap.x > -0.5f && gap.x < 0.5f){ UpMove(); }
+                else if(gap.y < 0 && gap.x > -0.5f && gap.x < 0.5f){
                     PlayerDir = "Down";
                     for(x = 0; x < gridSize; x++){
                         for(y = gridSize-1; y > 0; y--){
@@ -71,7 +63,7 @@ public class GameLogicManager : MonoBehaviour{
                         }
                     }
                 }
-                else if(gap.x > 0 && gap.y > -0.5f && gap.y < 0.5f){// Right
+                else if(gap.x > 0 && gap.y > -0.5f && gap.y < 0.5f){
                     PlayerDir = "Right";
                     for(y = 0; y < gridSize; y++){
                         for(x = 0; x < gridSize-1; x++){
@@ -81,7 +73,7 @@ public class GameLogicManager : MonoBehaviour{
                         }
                     }
                 }
-                else if(gap.x < 0 && gap.y > -0.5f && gap.y < 0.5f){// Left
+                else if(gap.x < 0 && gap.y > -0.5f && gap.y < 0.5f){
                     PlayerDir = "Left";
                     for(y = 0; y < gridSize; y++){
                         for(x = gridSize-1; x > 0; x--){
@@ -128,12 +120,12 @@ public class GameLogicManager : MonoBehaviour{
                     }
 
                     if(k == 0){
-                        for(y = 0; y < 5; y++){//가로에 결합가능한 블럭 확인
+                        for(y = 0; y < 5; y++){// 가로에 결합가능한 블럭 확인
                             for(x = 0; x < 5-1; x++){
                                 if(Grid[x, y].name == Grid[x + 1, y].name) l++;
                             }
                         }
-                        for(x = 0; x < 5; x++){//세로에 결합가능한 블럭 확인
+                        for(x = 0; x < 5; x++){// 세로에 결합가능한 블럭 확인
                             for(y = 0; y < 5-1; y++){
                                 if(Grid[x, y].name == Grid[x, y + 1].name) l++;
                             }
@@ -197,23 +189,47 @@ public class GameLogicManager : MonoBehaviour{
 
     }
 
+    void UpMove(){
+        PlayerDir = "Up";
+        for(x = 0; x < gridSize; x++){
+            for(y = 0; y < gridSize-1; y++){
+                for(i = gridSize-1; i > y; i--){
+                    MoveOrMerge(x, i - 1, x, i);
+                }
+            }
+        }
+    }
+    void DownMove(){
+        
+    }
+    void RightMove(){
+        
+    }
+    void LeftMove(){
+        
+    }
+
     void PlayerSpawn(){// Player Object 생성
         x = 2;
         y = 0;
         Grid[x, y] = Instantiate(n[5], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
         Grid[x, y].tag = "Player";
     }
+
     void Spawn(){// Monster Object 생성
+        if (nokori == 0) return;
         while(true){
             x = Random.Range(0,gridSize);
             y = Random.Range(0,gridSize);
             if(Grid[x, y] == null) break;
         }
         Grid[x, y] = Instantiate(Random.Range(0,5) > 0? n[0]:n[1], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
+        nokori--;
+        Nokori.text = nokori.ToString() + "/" + StageGoal.ToString();
         //Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
     }
 
-    public void Restart(){// 재시작 (ReStart, TryAgain)
+    public void Restart(){// 재시작
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
