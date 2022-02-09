@@ -11,6 +11,7 @@ public class GameLogicManager : MonoBehaviour{
 
     public GameObject[] n;
     public GameObject Quit;
+    public GameObject M2, M4, M8, M16;
     public Text HP, Damage, Nokori;
     bool inputWait, moveWait;
     bool stop = false;
@@ -94,6 +95,10 @@ public class GameLogicManager : MonoBehaviour{
                             if(Grid[x, y] == null) continue;
                             if(Grid[x, y].tag == "Combine" && Grid[x, y].name != n[4].name + "(Clone)") Grid[x, y].tag = "Untagged";
                             if(Grid[x, y].tag == "PlayerDone") Grid[x, y].tag = "Player";
+                            if(Grid[x, y].name == n[0].name + "(Clone)"){ M2.SetActive(true); }
+                            else if(Grid[x, y].name == n[1].name + "(Clone)"){ M4.SetActive(true); }
+                            else if(Grid[x, y].name == n[2].name + "(Clone)"){ M8.SetActive(true); }
+                            else if(Grid[x, y].name == n[3].name + "(Clone)"){ M16.SetActive(true); }
                         }
                     }
                 }
@@ -205,7 +210,7 @@ public class GameLogicManager : MonoBehaviour{
         Grid[x, y] = Instantiate(Random.Range(0,5) > 0? n[0]:n[1], new Vector3(1.94f * x -3.87f, 1.94f * y -3.0f, 0), Quaternion.identity);
         nokori--;
         Nokori.text = nokori.ToString() + "/" + StageGoal.ToString();
-        //Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
+        Grid[x, y].GetComponent<Animator>().SetTrigger("Spawn");
     }
 
     void Quit2048(){
