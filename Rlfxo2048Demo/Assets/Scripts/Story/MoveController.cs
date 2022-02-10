@@ -59,7 +59,7 @@ public class MoveController : MonoBehaviour
         rigidbody2D.velocity = movement * movementSpeed;
 
         // Ray
-        Debug.DrawRay(rigidbody2D.position, dirVec * 1f, new Color(0,1,0));
+        //Debug.DrawRay(rigidbody2D.position, dirVec * 1f, new Color(0,1,0));
         RaycastHit2D rayHit = Physics2D.Raycast(rigidbody2D.position, dirVec, 0.6f, LayerMask.GetMask("Object"));
         if(rayHit.collider != null) {
             scanObject = rayHit.collider.gameObject;
