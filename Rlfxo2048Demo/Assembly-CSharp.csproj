@@ -41,6 +41,8 @@
      <Compile Include="Assets/Scripts/Story/MoveController.cs" />
      <Compile Include="Assets/Scripts/Game/CameraFix.cs" />
      <Compile Include="Assets/Scripts/Game/GameLogicManager.cs" />
+     <Compile Include="Assets/Scripts/SoundManager.cs" />
+     <Compile Include="Assets/Scripts/PlaySoundOnStart.cs" />
     <Reference Include="UnityEngine">
         <HintPath>/Applications/Unity/Hub/Editor/2020.3.23f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
@@ -703,13 +705,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Unity.2D.Tilemap.Extras.Editor.csproj">
-      <Project>{f5cf8d5b-db94-5d02-5faf-39f91c6955c2}</Project>
-      <Name>Unity.2D.Tilemap.Extras.Editor</Name>
-    </ProjectReference>
     <ProjectReference Include="Unity.2D.Tilemap.Extras.csproj">
       <Project>{0e3e74e1-ec4a-edb3-26b7-561c31db72dc}</Project>
       <Name>Unity.2D.Tilemap.Extras</Name>
+    </ProjectReference>
+    <ProjectReference Include="Unity.2D.Tilemap.Extras.Editor.csproj">
+      <Project>{f5cf8d5b-db94-5d02-5faf-39f91c6955c2}</Project>
+      <Name>Unity.2D.Tilemap.Extras.Editor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

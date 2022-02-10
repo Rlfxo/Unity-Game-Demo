@@ -339,5 +339,6 @@
 "Assets/Scripts/Game/CameraFix.cs"
 "Assets/Scripts/Game/GameLogicManager.cs"
 "Assets/Scripts/Game/Moving.cs"
+"Assets/Scripts/SoundManager.cs"
 "Assets/Scripts/Story/GameManager.cs"
 "Assets/Scripts/Story/MoveController.cs"
