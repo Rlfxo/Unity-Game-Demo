@@ -6,25 +6,42 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public Text talkText;
+    public TalkManager talkManager;
     public GameObject talkPanel;
     public GameObject scanObject;
     public bool isAction = false;
-    // Start is called before the first frame update
-    void Start()
-    {
+    public int talkindex;
+
+    void Start(){
         talkPanel.SetActive(isAction);
     }
 
     // Update is called once per frame
     public void Action(GameObject scanObj)
     {
-        if(isAction) {
-            isAction = false;
-        }else {
-            isAction = true;
-            scanObject = scanObj;
-            talkText.text = scanObject.name + " 발견 함.";
-        }
+        scanObject = scanObj;
+        ObjData objData = scanObject.GetComponent<ObjData>();
+        Talk(objData.id, objData.isNPC);
+        
         talkPanel.SetActive(isAction);
+    }
+
+    void Talk(int id, bool isNPC){
+        string tlakData = talkManager.GetTalk(id, talkindex);
+
+        if(tlakData == null){
+            isAction = false;
+            talkindex = 0;
+            return;
+        }
+
+        if(isNPC){
+            talkText.text = tlakData;
+        }else {
+            talkText.text = tlakData;
+        }
+
+        isAction = true;
+        talkindex++;
     }
 }
