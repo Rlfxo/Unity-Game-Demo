@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public Text talkText;
+    public TextEffect talk;
     public TalkManager talkManager;
     public GameObject talkPanel;
     public GameObject scanObject;
+    public Image NPCImg;
     public bool isAction = false;
     public int talkindex;
 
@@ -27,7 +28,14 @@ public class GameManager : MonoBehaviour
     }
 
     void Talk(int id, bool isNPC){
-        string tlakData = talkManager.GetTalk(id, talkindex);
+        string tlakData = "";
+
+        if(talk.isAnim){
+            talk.SetMsg("");
+            return;
+        }else {
+            tlakData = talkManager.GetTalk(id, talkindex);
+        }
 
         if(tlakData == null){
             isAction = false;
@@ -36,9 +44,14 @@ public class GameManager : MonoBehaviour
         }
 
         if(isNPC){
-            talkText.text = tlakData;
+            talk.SetMsg(tlakData.Split(':')[0]);
+
+            NPCImg.sprite = talkManager.GetNPCImg(id, int.Parse(tlakData.Split(':')[1]));
+            NPCImg.color = new Color(1, 1, 1, 1);
         }else {
-            talkText.text = tlakData;
+            talk.SetMsg(tlakData);
+
+            NPCImg.color = new Color(1, 1, 1, 0);
         }
 
         isAction = true;
