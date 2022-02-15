@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     public TalkManager talkManager;
     public GameObject talkPanel;
     public GameObject scanObject;
+    public GameObject subMenu;
+    public GameObject player;
     public Image NPCImg;
     public bool isAction = false;
     public int talkindex;
@@ -17,7 +19,16 @@ public class GameManager : MonoBehaviour
         talkPanel.SetActive(isAction);
     }
 
-    // Update is called once per frame
+    void Update(){
+        if(Input.GetButtonDown("Cancel")){
+            if(subMenu.activeSelf){
+                subMenu.SetActive(false);
+            }else{
+                subMenu.SetActive(true);
+            }
+        }
+    }
+
     public void Action(GameObject scanObj)
     {
         scanObject = scanObj;
@@ -56,5 +67,30 @@ public class GameManager : MonoBehaviour
 
         isAction = true;
         talkindex++;
+    }
+    public void GameSave(){
+        PlayerPrefs.SetFloat("PlayerX", player.transform.position.x);
+        PlayerPrefs.SetFloat("PlayerY", player.transform.position.y);
+        //player.x
+        //player.y
+        //Save point or Index
+        PlayerPrefs.Save();
+
+        subMenu.SetActive(false);
+    }
+
+    public void GameLoad(){
+        if(!PlayerPrefs.HasKey("PlayerX")){
+            return;
+        }
+
+        float x = PlayerPrefs.GetFloat("PlayerX");
+        float y = PlayerPrefs.GetFloat("PlayerY");
+
+        player.transform.position = new Vector3(x, y, 0);
+    }
+
+    public void GameQuit(){
+        Application.Quit();
     }
 }
