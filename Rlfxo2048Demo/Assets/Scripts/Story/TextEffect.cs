@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class TextEffect : MonoBehaviour{
     Text msgText;
     AudioSource audioSource;
+    public AudioClip[] sounds;
     public GameObject EndCursor;
     public int TextSpeed;
     public bool isAnim;
@@ -18,7 +19,17 @@ public class TextEffect : MonoBehaviour{
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void SetMsg(string msg){
+    public void SetMsg(int id, string msg){
+        if(id < 999){
+            audioSource.clip = sounds[3];
+        }else{
+            if(id >= 5000){
+                audioSource.clip = sounds[0];
+            }else{
+                audioSource.clip = sounds[1];
+            }
+        }
+
         if(isAnim) {
             msgText.text = targetMsg;
             CancelInvoke();

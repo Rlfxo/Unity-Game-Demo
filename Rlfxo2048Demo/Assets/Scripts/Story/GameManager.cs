@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
         string tlakData = "";
 
         if(talk.isAnim){
-            talk.SetMsg("");
+            talk.SetMsg(id, "");
             return;
         }else {
             tlakData = talkManager.GetTalk(id, talkindex);
@@ -44,12 +44,12 @@ public class GameManager : MonoBehaviour
         }
 
         if(isNPC){
-            talk.SetMsg(tlakData.Split(':')[0]);
+            talk.SetMsg(id, tlakData.Split(':')[0]);
 
             NPCImg.sprite = talkManager.GetNPCImg(id, int.Parse(tlakData.Split(':')[1]));
             NPCImg.color = new Color(1, 1, 1, 1);
         }else {
-            talk.SetMsg(tlakData);
+            talk.SetMsg(id, tlakData);
 
             NPCImg.color = new Color(1, 1, 1, 0);
         }
